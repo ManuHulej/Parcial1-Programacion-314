@@ -236,35 +236,6 @@ def exportar_a_txt(participantes):
 
     archivo.close()
     print("Archivo 'resultados.txt' exportado correctamente.")
-    
-def generar_matriz(participantes):
-    """
-    Genera una matriz (lista de listas) que contiene los datos de los participantes
-    junto con sus promedios. La primera fila es el encabezado.
-    
-    """
-    
-    
-    matriz = [None] * (len(participantes) + 1)
-    matriz[0] = ["Nombre", "J1", "J2", "J3", "Promedio"]
-
-    i = 0
-    while i < len(participantes):
-        p = participantes[i]
-        promedio = (p["j1"] + p["j2"] + p["j3"]) / 3
-        promedio = int(promedio * 100) / 100  
-
-        fila = [None] * 5
-        fila[0] = p["nombre"]
-        fila[1] = p["j1"]
-        fila[2] = p["j2"]
-        fila[3] = p["j3"]
-        fila[4] = promedio
-
-        matriz[i + 1] = fila
-        i = i + 1
-
-    return matriz
 
 def mostrar_top3(participantes):
     """
