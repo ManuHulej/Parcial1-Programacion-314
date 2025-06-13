@@ -6,12 +6,13 @@ from inputs import pedir_nombre, pedir_puntaje
 # Funcion auxiliar para calcular el promedio de un participante
 def calcular_promedio(p):
     """
-    Calcula y devuelve el promedio de un participante redondeado a 2 decimales.
+    Calcula y devuelve el promedio de un participante [nombre, j1, j2, j3].
     """
-    suma = participante[1] + participante[2] + participante[3]
+    suma = p[1] + p[2] + p[3]
     promedio = suma / 3
-    int(promedio * 100) / 100
+    promedio = int(promedio * 100) / 100  # redondeo manual a 2 decimales
     return promedio
+
 
 
 from inputs import pedir_nombre
