@@ -8,28 +8,27 @@ def calcular_promedio(p):
     """
     Calcula y devuelve el promedio de un participante redondeado a 2 decimales.
     """
-    promedio = (p["j1"] + p["j2"] + p["j3"]) / 3
-    return int(promedio * 100) / 100
+    suma = participante[1] + participante[2] + participante[3]
+    promedio = suma / 3
+    int(promedio * 100) / 100
+    return promedio
 
 
-def cargar_participantes():
+from inputs import pedir_nombre
+
+def cargar_participantes(cantidad):
     """
-    Carga 5 participantes validando el nombre a través de la función pedir_nombre().
-    
+    Carga cantidad de participantes y los devuelve en una lista.
+    Cada participante es una lista: [nombre, None, None, None]
     """
-    participantes = [None, None, None, None, None]
+    participantes = [None] * cantidad
     i = 0
-    while i < 5:
+    while i < cantidad:
         nombre = pedir_nombre()
-        participante = {
-            "nombre": nombre,
-            "j1": None,
-            "j2": None,
-            "j3": None
-        }
-        participantes[i] = participante
-        i = i + 1
+        participantes[i] = [nombre, None, None, None]
+        i += 1
     return participantes
+
 
 
 def cargar_puntuaciones(participantes):
@@ -39,69 +38,73 @@ def cargar_puntuaciones(participantes):
     """
     i = 0
     while i < len(participantes):
-        participante = participantes[i]
-        print("\nIngresá los puntajes para", participante["nombre"])
-        participante["j1"] = pedir_puntaje("Jurado 1")
-        participante["j2"] = pedir_puntaje("Jurado 2")
-        participante["j3"] = pedir_puntaje("Jurado 3")
-        i = i + 1
-
+        nombre = participantes[i][0]
+        print(f"\nIngresá los puntajes para {nombre}:")
+        participantes[i][1] = pedir_puntaje("Jurado 1")
+        participantes[i][2] = pedir_puntaje("Jurado 2")
+        participantes[i][3] = pedir_puntaje("Jurado 3")
+        i += 1
     print("Puntuaciones cargadas correctamente.")
+    return True
 
 
 def mostrar_puntajes(participantes):
     """
-    Muestra el nombre y las notas de cada jurado junto con el promedio de cada participante.
+    Muestra el nombre y puntajes de cada jurado y el promedio del participante.
+    Devuelve True si muestra correctamente.
     """
-    
     print("\n--- PUNTAJES Y PROMEDIOS ---")
-    for p in participantes:
-        nombre = p["nombre"]
-        j1 = p["j1"]
-        j2 = p["j2"]
-        j3 = p["j3"]
+    i = 0
+    while i < len(participantes):
+        p = participantes[i]
         promedio = calcular_promedio(p)
-
-        print(f"\nParticipante: {nombre}")
-        print(f"  Jurado 1: {j1}")
-        print(f"  Jurado 2: {j2}")
-        print(f"  Jurado 3: {j3}")
+        print(f"\nParticipante: {p[0]}")
+        print(f"  Jurado 1: {p[1]}")
+        print(f"  Jurado 2: {p[2]}")
+        print(f"  Jurado 3: {p[3]}")
         print(f"  Promedio: {promedio:.2f}")
+        i += 1
+    return True
+
 
 def mostrar_promedios_menores_a_4(participantes):
     """
-    Muestra los participantes cuyo promedio es menor a 4.
-    Si no hay ninguno, informa que no se encontraron.
+    Muestra participantes con promedio menor a 4. Devuelve la cantidad encontrada.
     """
-    
-    encontrados = False 
+    encontrados = 0
     print("\n--- Participantes con promedio menor a 4 ---")
-    
-    for p in participantes:
+    i = 0
+    while i < len(participantes):
+        p = participantes[i]
         promedio = calcular_promedio(p)
         if promedio < 4:
-            encontrados = True
-            print(f"{p['nombre']} - Promedio: {promedio:.2f}")
-    
-    if not encontrados:
+            print(f"{p[0]} - Promedio: {promedio:.2f}")
+            encontrados += 1
+        i += 1
+
+    if encontrados == 0:
         print("No hay participantes con promedio menor a 4.")
+    return encontrados
+
 
 def mostrar_promedios_menores_a_8(participantes):
     """
-    Muestra los participantes cuyo promedio es menor a 8.
-    Si no hay ninguno, informa que no se encontraron.
+    Muestra participantes con promedio menor a 8. Devuelve la cantidad encontrada.
     """
-    encontrados = False
+    encontrados = 0
     print("\n--- Participantes con promedio menor a 8 ---")
-    
-    for p in participantes:
+    i = 0
+    while i < len(participantes):
+        p = participantes[i]
         promedio = calcular_promedio(p)
         if promedio < 8:
-            encontrados = True
-            print(f"{p['nombre']} - Promedio: {promedio:.2f}")
-    
-    if not encontrados:
+            print(f"{p[0]} - Promedio: {promedio:.2f}")
+            encontrados += 1
+        i += 1
+
+    if encontrados == 0:
         print("No hay participantes con promedio menor a 8.")
+    return encontrados
 
 def promedio_por_jurado(participantes):
     """
@@ -111,233 +114,310 @@ def promedio_por_jurado(participantes):
     total_j1 = 0
     total_j2 = 0
     total_j3 = 0
-    cantidad = 0
+    cantidad = len(participantes)
 
     i = 0
-    while i < len(participantes):
-        total_j1 = total_j1 + participantes[i]["j1"]
-        total_j2 = total_j2 + participantes[i]["j2"]
-        total_j3 = total_j3 + participantes[i]["j3"]
-        
-        cantidad +=  1
-        i+=  1
+    while i < cantidad:
+        total_j1 += participantes[i][1]
+        total_j2 += participantes[i][2]
+        total_j3 += participantes[i][3]
+        i += 1
 
-    promedio_j1 = int((total_j1 / cantidad) * 100) / 100
-    promedio_j2 = int((total_j2 / cantidad) * 100) / 100
-    promedio_j3 = int((total_j3 / cantidad) * 100) / 100
+    prom1 = int((total_j1 / cantidad) * 100) / 100
+    prom2 = int((total_j2 / cantidad) * 100) / 100
+    prom3 = int((total_j3 / cantidad) * 100) / 100
 
     print("\n--- Promedio de cada jurado ---")
-    print("Jurado 1:", promedio_j1)
-    print("Jurado 2:", promedio_j2)
-    print("Jurado 3:", promedio_j3)
-    
-    return promedio_j1, promedio_j2, promedio_j3
+    print(f"Jurado 1: {prom1}")
+    print(f"Jurado 2: {prom2}")
+    print(f"Jurado 3: {prom3}")
+
+    return [prom1, prom2, prom3]
 
 def jurado_mas_estricto(participantes):
     """
     Muestra todos los jurados que tengan el promedio más bajo.
     Usa la función promedio_por_jurado para obtener los promedios.
     """
-    promedio_j1, promedio_j2, promedio_j3 = promedio_por_jurado(participantes)
-
-    minimo = promedio_j1
-    if promedio_j2 < minimo:
-        minimo = promedio_j2
-    if promedio_j3 < minimo:
-        minimo = promedio_j3
+    promedios = promedio_por_jurado(participantes)
+    minimo = promedios[0]
+    if promedios[1] < minimo:
+        minimo = promedios[1]
+    if promedios[2] < minimo:
+        minimo = promedios[2]
 
     print("\n--- Jurado/s más estricto/s ---")
-    if promedio_j1 == minimo:
-        print("Jurado 1 con promedio de", promedio_j1)
-    if promedio_j2 == minimo:
-        print("Jurado 2 con promedio de", promedio_j2)
-    if promedio_j3 == minimo:
-        print("Jurado 3 con promedio de", promedio_j3)
+    if promedios[0] == minimo:
+        print("Jurado 1 con promedio de", promedios[0])
+    if promedios[1] == minimo:
+        print("Jurado 2 con promedio de", promedios[1])
+    if promedios[2] == minimo:
+        print("Jurado 3 con promedio de", promedios[2])
 
+    return True
 
-
-def mostrar_ordenados_por_promedio(participantes):
+def jurado_mas_generoso(participantes):
     """
-    Calcula el promedio de cada participante, los ordena de menor a mayor
-    utilizando el algoritmo de ordenamiento burbuja, y los muestra por pantalla.
-
+    Muestra el o los jurados con el promedio más alto.
+    Devuelve la cantidad de jurados que coinciden como más generosos.
     """
-    
-    
+
+    promedios = promedio_por_jurado(participantes)  
+
+    maximo = promedios[0]
+    i = 1
+    while i < 3:
+        if promedios[i] > maximo:
+            maximo = promedios[i]
+        i += 1
+
+    jurados = [0, 0, 0]  
+    cantidad = 0
+
+    i = 0
+    while i < 3:
+        if promedios[i] == maximo:
+            jurados[cantidad] = i + 1  
+            cantidad += 1
+        i += 1
+
+    print("\n--- Jurado/s más generoso/s ---")
+    i = 0
+    while i < cantidad:
+        print(f"Jurado {jurados[i]} con promedio de {maximo}")
+        i += 1
+
+    return cantidad
+
+def mostrar_puntajes_iguales(participantes):
+    """
+    Muestra los participantes que recibieron las mismas 3 puntuaciones.
+    Devuelve la cantidad encontrada.
+    """
+    encontrados = 0
+
+    print("\n--- Participantes con los 3 puntajes iguales ---")
+
     i = 0
     while i < len(participantes):
-        p = participantes[i]
-        promedio = calcular_promedio(p)  
-        p["promedio"] = promedio
+        j1 = participantes[i][1]
+        j2 = participantes[i][2]
+        j3 = participantes[i][3]
+
+        if j1 == j2 and j2 == j3:
+            print(f"{participantes[i][0]} - Puntaje: {j1}")
+            encontrados += 1
         i += 1
+
+    if encontrados == 0:
+        print("No hay participantes con puntajes iguales entre los tres jurados.")
+
+    return encontrados
+
+def buscar_participante_por_nombre(participantes):
+    """
+    Permite buscar un participante por nombre e imprime sus datos si existe.
+    Devuelve True si lo encuentra, False si no.
+    """
+
+    nombre_buscado = input("Ingresá el nombre que querés buscar: ")
+    encontrado = False
+    i = 0
+
+    while i < len(participantes):
+        nombre_actual = participantes[i][0]
+
         
-    n = len(participantes)
-    i = 0
-    while i < n - 1:
-        j = 0
-        while j < n - i - 1:
-            if participantes[j]["promedio"] > participantes[j+1]["promedio"]:
-                
-                aux = participantes[j]
-                participantes[j] = participantes[j+1]
-                participantes[j+1] = aux
-            j += 1
+        iguales = True
+        if len(nombre_buscado) != len(nombre_actual):
+            iguales = False
+        else:
+            j = 0
+            while j < len(nombre_buscado):
+                letra1 = nombre_buscado[j]
+                letra2 = nombre_actual[j]
+
+                if "A" <= letra1 <= "Z":
+                    letra1 = chr(ord(letra1) + 32)  # convertir a minúscula
+                if "A" <= letra2 <= "Z":
+                    letra2 = chr(ord(letra2) + 32)
+
+                if letra1 != letra2:
+                    iguales = False
+                j += 1
+
+        if iguales:
+            promedio = calcular_promedio(participantes[i])
+            print("\n--- Participante encontrado ---")
+            print(f"Nombre: {participantes[i][0]}")
+            print(f"Jurado 1: {participantes[i][1]}")
+            print(f"Jurado 2: {participantes[i][2]}")
+            print(f"Jurado 3: {participantes[i][3]}")
+            print(f"Promedio: {promedio:.2f}")
+            encontrado = True
         i += 1
 
-    print("\n--- Participantes ordenados por promedio ---")
-    k = 0
-    while k < len(participantes):
-        p = participantes[k]
-        print(p["nombre"], "- Promedio:", p["promedio"])
-        k += 1
+    if not encontrado:
+        print("No se encontró un participante con ese nombre.")
 
-def mostrar_ganador(participantes):
-    
-    """
-    Calcula el promedio de cada participante y muestra el que tenga el mayor promedio.
-    
-    """
-    
-    i = 0
-    mejor_promedio = -1
-    ganador = ""
+    return encontrado
 
-    while i < len(participantes):
-        p = participantes[i]
-        promedio = calcular_promedio(p)
 
-        if promedio > mejor_promedio:
-            mejor_promedio = promedio
-            ganador = p["nombre"]
 
-        i = i + 1
 
-    print("\n--- GANADOR/A DEL CONCURSO ---")
-    print("El ganador es", ganador, "con promedio de", mejor_promedio)
-
-def exportar_a_txt(participantes):
-    """
-    Calcula el promedio de cada participante y exporta los datos a un archivo de texto (.txt).
-    Cada línea del archivo contiene el nombre del participante y su promedio.
-    
-    """
-    
-    
-    archivo = open("resultados.txt", "w")
-
-    i = 0
-    while i < len(participantes):
-        p = participantes[i]
-        promedio = calcular_promedio(p)
-
-        linea = p["nombre"] + " - Promedio: " + str(promedio) + "\n"
-        archivo.write(linea)
-        i = i + 1
-
-    archivo.close()
-    print("Archivo 'resultados.txt' exportado correctamente.")
 
 def mostrar_top3(participantes):
     """
-    Calcula el promedio de cada participante, los ordena de mayor a menor usando burbuja,
-    y muestra en pantalla los tres con mejor promedio.
-
+    Muestra los 3 participantes con mayor promedio.
+    Usa burbuja para ordenar de mayor a menor.
+    Devuelve True si muestra correctamente.
     """
+
     
-    
-    datos = [None] * len(participantes)
+    ordenados = [None] * len(participantes)
 
     i = 0
     while i < len(participantes):
-        p = participantes[i]
-        promedio = (p["j1"] + p["j2"] + p["j3"]) / 3
-        promedio = int(promedio * 100) / 100
+        fila = [None] * 5
+        j = 0
+        while j < 4:
+            fila[j] = participantes[i][j]
+            j += 1
+        fila[4] = calcular_promedio(participantes[i])
+        ordenados[i] = fila
+        i += 1
 
-        fila = [None] * 2
-        fila[0] = p["nombre"]
-        fila[1] = promedio
-        datos[i] = fila
-        i = i + 1
-
-    n = len(datos)
+    
+    n = len(ordenados)
     i = 0
     while i < n - 1:
         j = 0
         while j < n - i - 1:
-            if datos[j][1] < datos[j + 1][1]:
-                aux = datos[j]
-                datos[j] = datos[j + 1]
-                datos[j + 1] = aux
-            j = j + 1
-        i = i + 1
+            if ordenados[j][4] < ordenados[j+1][4]:
+                aux = ordenados[j]
+                ordenados[j] = ordenados[j+1]
+                ordenados[j+1] = aux
+            j += 1
+        i += 1
 
-    print("\n--- TOP 3 PROMEDIOS ---")
-    k = 0
-    while k < 3 and k < len(datos):
-        print(datos[k][0], "- Promedio:", datos[k][1])
-        k = k + 1
+    
+    print("\n--- TOP 3 Participantes con mayor promedio ---")
+    i = 0
+    while i < 3 and i < len(ordenados):
+        print(f"{ordenados[i][0]} - Promedio: {ordenados[i][4]:.2f}")
+        i += 1
+
+    return True
+
+
+
+
+
 
 def mostrar_ordenados_alfabeticamente(participantes):
     """
-    Calcula el promedio de cada participante, los ordena alfabéticamente por nombre
-    usando el algoritmo de burbuja, y los muestra en formato de tabla.
-
+    Muestra los participantes ordenados por nombre de A a Z.
+    Devuelve True si funciona correctamente.
     """
 
-    datos = [None] * len(participantes)
+    
+    ordenados = [None] * len(participantes)
 
     i = 0
     while i < len(participantes):
-        p = participantes[i]
-        promedio = (p["j1"] + p["j2"] + p["j3"]) / 3
-        promedio = int(promedio * 100) / 100
-
         fila = [None] * 5
-        fila[0] = p["nombre"]
-        fila[1] = p["j1"]
-        fila[2] = p["j2"]
-        fila[3] = p["j3"]
-        fila[4] = promedio
+        j = 0
+        while j < 4:
+            fila[j] = participantes[i][j]
+            j += 1
+        fila[4] = calcular_promedio(participantes[i])
+        ordenados[i] = fila
+        i += 1
 
-        datos[i] = fila
-        i = i + 1
-
-
-    n = len(datos)
+    
+    n = len(ordenados)
     i = 0
     while i < n - 1:
         j = 0
         while j < n - i - 1:
-            if datos[j][0] > datos[j + 1][0]:  
-                aux = datos[j]
-                datos[j] = datos[j + 1]
-                datos[j + 1] = aux
-            j = j + 1
-        i = i + 1
+            if ordenados[j][0] > ordenados[j+1][0]:
+                aux = ordenados[j]
+                ordenados[j] = ordenados[j+1]
+                ordenados[j+1] = aux
+            j += 1
+        i += 1
+
+    print("\n--- Participantes ordenados alfabéticamente ---")
+    i = 0
+    while i < len(ordenados):
+        print(f"{ordenados[i][0]} - Notas: {ordenados[i][1]}, {ordenados[i][2]}, {ordenados[i][3]} - Promedio: {ordenados[i][4]:.2f}")
+        i += 1
+
+    return True
 
 
-    print("\n--- PARTICIPANTES ORDENADOS ALFABÉTICAMENTE ---")
-    print("Nombre       | J1     | J2     | J3     | Promedio")
-    print("---------------------------------------------------")
+def mostrar_ganador(participantes):
+    """
+    Muestra al participante ganador (mayor promedio).
+    Si hay más de uno con el mismo promedio, muestra un mensaje de empate.
+    Devuelve la lista de ganadores (1 o más).
+    """
+    i = 0
+    mejor_promedio = calcular_promedio(participantes[0])
 
-    k = 0
-    while k < len(datos):
-        fila = datos[k]
+    
+    while i < len(participantes):
+        promedio = calcular_promedio(participantes[i])
+        if promedio > mejor_promedio:
+            mejor_promedio = promedio
+        i += 1
 
-        nombre = fila[0]
-        j1 = fila[1]
-        j2 = fila[2]
-        j3 = fila[3]
-        promedio = fila[4]
+    
+    ganadores = [None] * len(participantes)
+    cantidad = 0
+    i = 0
+    while i < len(participantes):
+        if calcular_promedio(participantes[i]) == mejor_promedio:
+            ganadores[cantidad] = participantes[i]
+            cantidad += 1
+        i += 1
 
-        espacios = 13 - len(nombre)
-        nombre_con_espacios = nombre + " " * espacios
+    print("\n--- GANADOR DE LA COMPETENCIA ---")
+    if cantidad == 1:
+        print(f"El ganador es {ganadores[0][0]} con un promedio de {mejor_promedio:.2f}")
+    else:
+        print(f"Hay {cantidad} participantes empatados con promedio {mejor_promedio:.2f}.")
+        print("Se requiere realizar un desempate entre:")
+        j = 0
+        while j < cantidad:
+            print(f"- {ganadores[j][0]}")
+            j += 1
 
-        print(
-            nombre_con_espacios + "|  " +
-            str(j1) + "    |  " +
-            str(j2) + "    |  " +
-            str(j3) + "    |  " +
-            str(promedio)
-        )
-        k = k + 1
+    
+    ganadores_definitivos = [None] * cantidad
+    j = 0
+    while j < cantidad:
+        ganadores_definitivos[j] = ganadores[j]
+        j += 1
+
+    return ganadores_definitivos
+
+import random
+
+def resolver_empate(ganadores):
+    """
+    Recibe una lista de participantes empatados y elige uno aleatoriamente.
+    Devuelve el nombre del ganador seleccionado.
+    """
+    if len(ganadores) <= 1:
+        print("No hay empate para resolver.")
+        return None
+
+    
+    indice = random.randint(0, len(ganadores) - 1)
+    ganador = ganadores[indice][0]
+
+    print("\n--- DESEMPATE ---")
+    print(f"El ganador por desempate es: {ganador}")
+
+    return ganador
